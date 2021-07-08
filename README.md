@@ -1,68 +1,31 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Thoughts
 
-## Available Scripts
+I started the problem by wrtiting a presentational react card component and marking HTML tags which should have loading animation.
 
-In the project directory, you can run:
+### Implement Shimmer Animation
 
-### `yarn start`
+I could attach a css class or data attribute to mark those HTML tags and write css rules to have the loader animation. I choose to attach data attribute as this feels like an additional info to those HTML tags.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+I added a parent div with css class that decides when its child tag containing data-loader attribute will turn into shimmer. But i am still attaching data-loader attribute inside the presentational component mannually. We need to figure out a way to add data attribute programatically.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+### Skeleton component as a independent component
 
-### `yarn test`
+As per problem statement, we need a component that can wrap any other component to have a shimmer effect. High order component and composition patterns came in my mind to implement this. I choose composition because this make code more declarative, less cryptic and easier to understand. I also set opacity 0 to hide the component till the component is mounted
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Figure out leaf nodes and add data attribute for marking
 
-### `yarn build`
+Now for the main problem, we understand that we would like to turn leaf nodes of component's DOM into shimmer. First, i tried to figure out leaf nodes with React.Children APIs but it returns React components not the DOM node. so i tried the vanila JS approach to figure out leaf node of component's DOM and added data attribute to DOM nodes.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Add support for _img_ tag
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+One more challenge i faced in adding support for _img_ tag. First i thought of doing some DOM manipulation to hide img node with div and setting width, height equals to img but this looks complicated. so tried to figure out any simpler solution. Initially, i was trying to use empty string src in dummy data for image. But because of this i was getting broken image icon in chrome. so i decided to have 1x1 transparent PNG data URI as valid dummy data for image.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Clean up
 
-### `yarn eject`
+Initially i made Skeleton component as stateful to know when the component is mounted but lated realized that same can be achieved through container ref. So Skeleton component is a stateless now.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Further Improvements
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+- Method for calculating leaf node can be moved to a util module.
+- Skeleton component can be memoized with React.memo.
+- Add support for theming in skeleton
